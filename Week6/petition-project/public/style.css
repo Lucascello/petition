@@ -1,0 +1,76 @@
+body {
+    background: rgb(174, 206, 238);
+    background: radial-gradient(
+        circle,
+        rgba(174, 206, 238, 1) 0%,
+        rgba(81, 132, 191, 1) 100%
+    );
+    display: flex;
+    justify-content: center;
+}
+
+form {
+    display: grid;
+}
+
+.input {
+    display: inline-flex;
+    width: 38em;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h4 {
+    margin: 0;
+}
+
+#sign {
+    width: 20em;
+}
+
+.pissoir {
+    width: 30em;
+    height: 15em;
+}
+
+.poops {
+    width: 21em;
+    height: 24em;
+}
+
+.closed {
+    width: 21em;
+    height: 24em;
+}
+
+canvas {
+    border: 1px dotted black;
+}
+
+.design {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    width: 5em;
+    height: 4em;
+    position: relative;
+    left: 42%;
+    background-color: black;
+    color: white;
+    font-size: larger;
+    border-radius: 20%;
+}
+
+.signed {
+    size: inherit;
+    background-image: url("./click.jpg");
+}
