@@ -15,6 +15,7 @@
         ctx.moveTo(w1, h1);
         ctx.lineTo(w2, h2);
         ctx.stroke();
+        
     }
 
     can.addEventListener("mousedown", (e) => {
