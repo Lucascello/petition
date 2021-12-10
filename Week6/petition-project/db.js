@@ -15,7 +15,8 @@ module.exports.getFullNames = () => {
 
 module.exports.addFullNames = (firstName, lastName, signature) => {
     const q = `INSERT INTO signatures (first, last, signature)
-        VALUES ($1, $2, $3)`;
+                VALUES ($1, $2, $3)
+                RETURNING id`;
     const params = [firstName, lastName, signature];
     console.log(firstName, lastName, signature);
     return db.query(q, params);

@@ -8,11 +8,16 @@ const { engine } = require("express-handlebars");
 
 const db = require("./db");
 
+const cookieSession = require("cookie-session");
+
 app.engine("handlebars", engine());
 
 app.set("view engine", "handlebars");
 
-app.use(require("cookie-parser")());
+app.use(cookieSession({
+    secret: `I'm always angry.`,/*avengers referece (the hulk)*/
+    maxAge: 1000 * 60 * 60 * 24 * 14
+}))
 
 app.use(express.static("./public"));
 
