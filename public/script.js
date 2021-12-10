@@ -15,7 +15,6 @@
         ctx.moveTo(w1, h1);
         ctx.lineTo(w2, h2);
         ctx.stroke();
-        
     }
 
     can.addEventListener("mousedown", (e) => {
@@ -34,11 +33,6 @@
     });
 
     document.addEventListener("mouseup", (e) => {
-        if (isDrawing === true) {
-            drawLine(ctx, width, height, e.offsetX, e.offsetY);
-            width = 0;
-            height = 0;
-            isDrawing = false;
-        }
+        isDrawing = false;
     });
-});
+})();

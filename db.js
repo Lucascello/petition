@@ -8,11 +8,6 @@ const db = spicedPg(
 );
 console.log(`[db] connecting to:${database}`);
 
-module.exports.getFullNames = () => {
-    const q = "SELECT signatures.first, signatures.last FROM signatures";
-    return db.query(q);
-};
-
 module.exports.addFullNames = (firstName, lastName, signature) => {
     const q = `INSERT INTO signatures (first, last, signature)
                 VALUES ($1, $2, $3)
@@ -20,4 +15,14 @@ module.exports.addFullNames = (firstName, lastName, signature) => {
     const params = [firstName, lastName, signature];
     console.log(firstName, lastName, signature);
     return db.query(q, params);
+};
+
+module.exports.getFullNames = () => {
+    const q = "SELECT first, last FROM signatures";
+    return db.query(q);
+};
+
+module.exports.addAllSigners = () => {
+    const q = "SELECT COUNT(*) FROM signatures";
+    return db.query(q);
 };

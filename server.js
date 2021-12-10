@@ -14,10 +14,12 @@ app.engine("handlebars", engine());
 
 app.set("view engine", "handlebars");
 
-app.use(cookieSession({
-    secret: `I'm always angry.`,/*avengers referece (the hulk)*/
-    maxAge: 1000 * 60 * 60 * 24 * 14
-}))
+app.use(
+    cookieSession({
+        secret: COOKIE_SECRET,
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+    })
+);
 
 app.use(express.static("./public"));
 
@@ -28,8 +30,12 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    console.log("coming from the home page, without signatures");
-    res.redirect("/something_went_wrong");
+    // console.log("coming from the home page, without signatures");
+    // if () {
+    // }
+    // else {
+    //     res.redirect("/something_went_wrong");
+    // }
 });
 
 app.get("/something_went_wrong", (req, res) => {
