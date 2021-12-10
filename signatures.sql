@@ -6,4 +6,3 @@ CREATE TABLE signatures (
     last VARCHAR NOT NULL CHECK (last != ''),
     signature VARCHAR NOT NULL CHECK (signature != '')
 );
-

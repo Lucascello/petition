@@ -13,23 +13,23 @@ const cookieSession = require("cookie-session");
 const secrets = require("./secrets.json");
 
 //////////////////prevent clickjacking/////////////////////////////
-app.use((req, res, next) => {
-    res.setHeader("x-frame-options", "deny");
-    next();
-});
+// app.use((req, res, next) => {
+//     res.setHeader("x-frame-options", "deny");
+//     next();
+// });
 ////////////////////////////////////////////////////////////////////
 
 app.engine("handlebars", engine());
 
 app.set("view engine", "handlebars");
 
-// app.use(
-//     cookieSession({
-//         secret: secrets.COOKIE_SECRET,
-//         maxAge: 1000 * 60 * 60 * 24 * 14,
-//         sameSite: true,
-//     })
-// );
+app.use(
+    cookieSession({
+        secret: secrets.COOKIE_SECRET,
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+        sameSite: true,
+    })
+);
 
 app.use(express.static("./public"));
 
@@ -39,8 +39,12 @@ app.get("/", (req, res) => {
     res.render("home", { layout: "main", db });
 });
 
+app.get("/petition", (req, res) => {
+    res.render("home", { layout: "main", db });
+});
+
 app.post("/", (req, res) => {
-    console.log(req.body);
+    console.log("REQUESTED BODY", req.body);
 
     const person = req.body;
 
@@ -51,9 +55,26 @@ app.post("/", (req, res) => {
             res.cookie(person.signature);
             res.redirect("/signed");
         })
-        .catch((err) => console.log("err in getFullNames:", err));
+        .catch((err) => {
+            console.log("err in getFullNames:", err);
+            res.render("home", { layout: "main", db });
+        });
+});
 
-    res.redirect("/something_went_wrong");
+app.post("/petition", (req, res) => {
+    const { first, last, signature } = req.body;
+
+    db.addFullNames(first, last, signature)
+        .then(() => {
+            res.cookie(first);
+            res.cookie(last);
+            res.cookie(signature);
+            res.redirect("/signed");
+        })
+        .catch((err) => {
+            console.log("err in getFullNames:", err);
+            res.redirect("/something_went_wrong");
+        });
 });
 
 app.get("/something_went_wrong", (req, res) => {
@@ -73,17 +94,22 @@ app.get("/signers", (req, res) => {
     res.render("signers", { layout: "main", db });
 });
 
-app.get("/signatures", (req, res) => {
-    let allSigns = "";
-
-    let names = "";
-    db.getFullNames()
-        .then(({ rows }) => {
-            console.log("getFullNames db results", rows);
-            names = rows;
-            return /* ? */ db.addAllSigners();
-        })
-        .catch((err) => console.log("err in getFullNames:", err));
-});
+//Who is runnng signatures.sql?
+// app.get("/signatures", (req, res) => {
+//     db.getFullNames()
+//         .then(({ rows }) => {
+//             console.log("getFullNames db results", rows);
+//             let names = rows;
+//             return /* ? */ db.addAllSigners();
+//         })
+//         .then((names) => {
+//             let allSigners = names[0].count;
+//             res.render("names from all who signed so far", {
+//                 names,
+//                 allSigners,
+//             });
+//         })
+//         .catch((err) => console.log("error getting names or signatures:", err));
+// });
 
 app.listen(8080, () => console.log("petition-project server listening"));
