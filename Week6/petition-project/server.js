@@ -8,9 +8,9 @@ const { engine } = require("express-handlebars");
 
 const db = require("./db");
 
-app.set("view engine", "handlebars");
-
 app.engine("handlebars", engine());
+
+app.set("view engine", "handlebars");
 
 app.use(require("cookie-parser")());
 
@@ -22,8 +22,18 @@ app.get("/", (req, res) => {
     res.render("home", { layout: "main", db });
 });
 
+app.post("/", (req, res) => {
+    console.log("coming from the home page, without signatures");
+    res.redirect("/something_went_wrong");
+});
+
 app.get("/something_went_wrong", (req, res) => {
     res.render("wrong", { layout: "main", db });
+});
+
+app.post("/something_went_wrong", (req, res) => {
+    console.log("returning to the home page");
+    res.redirect("/");
 });
 
 app.post("/something_went_wrong", (req, res) => {
@@ -32,6 +42,14 @@ app.post("/something_went_wrong", (req, res) => {
 
 app.get("/signed", (req, res) => {
     res.render("signed", { layout: "main", db });
+});
+
+app.get("/signers", (req, res) => {
+    res.render("signers", { layout: "main", db });
+});
+
+app.post("/signed", (req, res) => {
+    res.render("signers", { layout: "main", db });
 });
 
 app.get("/signatures", (req, res) => {

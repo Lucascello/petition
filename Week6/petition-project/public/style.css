@@ -13,6 +13,18 @@ form {
     display: grid;
 }
 
+h1 {
+    font-size: 2.5em;
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+
+h2 {
+    color: rgb(156, 101, 7);
+    font-size: 2em;
+    margin-top: 0.5em;
+}
+
 .input {
     display: inline-flex;
     width: 38em;
