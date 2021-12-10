@@ -86,3 +86,9 @@ button {
     size: inherit;
     background-image: url("./click.jpg");
 }
+
+#canvas {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}

@@ -10,16 +10,26 @@ const db = require("./db");
 
 const cookieSession = require("cookie-session");
 
+const secrets = require("./secrets.json");
+
+//////////////////prevent clickjacking/////////////////////////////
+app.use((req, res, next) => {
+    res.setHeader("x-frame-options", "deny");
+    next();
+});
+////////////////////////////////////////////////////////////////////
+
 app.engine("handlebars", engine());
 
 app.set("view engine", "handlebars");
 
-app.use(
-    cookieSession({
-        secret: COOKIE_SECRET,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-    })
-);
+// app.use(
+//     cookieSession({
+//         secret: secrets.COOKIE_SECRET,
+//         maxAge: 1000 * 60 * 60 * 24 * 14,
+//         sameSite: true,
+//     })
+// );
 
 app.use(express.static("./public"));
 
@@ -30,12 +40,20 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    // console.log("coming from the home page, without signatures");
-    // if () {
-    // }
-    // else {
-    //     res.redirect("/something_went_wrong");
-    // }
+    console.log(req.body);
+
+    const person = req.body;
+
+    db.addFullNames(person.first, person.last, person.signature)
+        .then(() => {
+            res.cookie(person.first);
+            res.cookie(person.last);
+            res.cookie(person.signature);
+            res.redirect("/signed");
+        })
+        .catch((err) => console.log("err in getFullNames:", err));
+
+    res.redirect("/something_went_wrong");
 });
 
 app.get("/something_went_wrong", (req, res) => {
@@ -47,10 +65,6 @@ app.post("/something_went_wrong", (req, res) => {
     res.redirect("/");
 });
 
-app.post("/something_went_wrong", (req, res) => {
-    res.render("home", { layout: "main", db });
-});
-
 app.get("/signed", (req, res) => {
     res.render("signed", { layout: "main", db });
 });
@@ -59,24 +73,17 @@ app.get("/signers", (req, res) => {
     res.render("signers", { layout: "main", db });
 });
 
-app.post("/signed", (req, res) => {
-    res.render("signers", { layout: "main", db });
-});
-
 app.get("/signatures", (req, res) => {
+    let allSigns = "";
+
+    let names = "";
     db.getFullNames()
         .then(({ rows }) => {
             console.log("getFullNames db results", rows);
+            names = rows;
+            return /* ? */ db.addAllSigners();
         })
         .catch((err) => console.log("err in getFullNames:", err));
 });
-
-// app.post("/add-actor", (req, res) => {
-//     db.addActor("Janelle Monáe", 36)
-//         .then(() => {
-//             console.log("yayyyyy actor added");
-//         })
-//         .catch((err) => console.log("no actor added :(", err));
-// });
 
 app.listen(8080, () => console.log("petition-project server listening"));

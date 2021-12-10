@@ -2,6 +2,8 @@
 (function () {
     const can = document.getElementById("can");
 
+    const canvas = document.getElementById("canvas");
+
     const ctx = can.getContext("2d");
 
     let isDrawing = false;
@@ -33,6 +35,14 @@
     });
 
     document.addEventListener("mouseup", (e) => {
-        isDrawing = false;
+        if (isDrawing === true) {
+            drawLine(ctx, width, height, e.offsetX, e.offsetY);
+            width = 0;
+            height = 0;
+            isDrawing = false;
+            const dataURL = can.toDataURL();
+            console.log("this is the dataURL", dataURL);
+            canvas.value = dataURL;
+        }
     });
 })();
