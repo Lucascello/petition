@@ -36,9 +36,11 @@
         </div>
         <br />
         <div>
+            {{#if addFullNamesError}}<h3>Couldn't get your signature, please try
+                    again</h3>{{/if}}
             <canvas id="can" width="600" height="100">Sign Here</canvas>
             <input
-                type="text"
+                type="hidden"
                 id="canvas"
                 name="signature"
                 placeholder=""
@@ -46,9 +48,7 @@
             />
         </div>
         <br />
-
         <button>Submit</button>
     </form>
-    {{error}}
 
 </div>

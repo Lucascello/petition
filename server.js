@@ -36,28 +36,32 @@ app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
+    if (req.session.signatureId) {
+        res.redirect("/thanks");
+    }
     res.render("home", { layout: "main", db });
 });
 
 app.get("/petition", (req, res) => {
+    if (req.session.signatureId) {
+        res.redirect("/thanks");
+    }
     res.render("home", { layout: "main", db });
 });
 
 app.post("/", (req, res) => {
-    console.log("REQUESTED BODY", req.body);
+    const { first, last, signature } = req.body;
 
-    const person = req.body;
-
-    db.addFullNames(person.first, person.last, person.signature)
+    db.addFullNames(first, last, signature)
         .then(() => {
-            res.cookie(person.first);
-            res.cookie(person.last);
-            res.cookie(person.signature);
+            res.cookie(first, "first name");
+            res.cookie(last, "last name");
+            res.cookie(signature);
             res.redirect("/thanks");
         })
         .catch((err) => {
-            console.log("err in getFullNames:", err);
-            res.render("home", { layout: "main", db });
+            console.log("error in getFullNames:", err);
+            res.render("home", { addFullNamesError: true });
         });
 });
 
@@ -66,8 +70,8 @@ app.post("/petition", (req, res) => {
 
     db.addFullNames(first, last, signature)
         .then(() => {
-            res.cookie(first, "Fabrício bonitão");
-            res.cookie(last, "bonitão");
+            res.cookie(first, "first name");
+            res.cookie(last, "last name");
             res.cookie(signature);
             res.redirect("/thanks");
         })
@@ -78,6 +82,7 @@ app.post("/petition", (req, res) => {
 });
 
 app.get("/thanks", (req, res) => {
+    const { first, last, signature } = req.body;
     db.getAllSigners()
         .then(({ rows }) => {
             res.render("thanks", { layout: "main", db, count: rows[0].count });
