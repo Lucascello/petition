@@ -36,27 +36,28 @@ app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
+    // console.log("get/", req.session);
     if (req.session.signatureId) {
-        res.redirect("/thanks");
+        return res.redirect("/thanks");
     }
     res.render("home", { layout: "main", db });
 });
 
 app.get("/petition", (req, res) => {
+    // console.log("get/petition", req.session);
     if (req.session.signatureId) {
-        res.redirect("/thanks");
+        return res.redirect("/thanks");
     }
     res.render("home", { layout: "main", db });
 });
 
 app.post("/", (req, res) => {
+    // console.log("post/");
     const { first, last, signature } = req.body;
 
     db.addFullNames(first, last, signature)
-        .then(() => {
-            res.cookie(first, "first name");
-            res.cookie(last, "last name");
-            res.cookie(signature);
+        .then(({ rows }) => {
+            req.session.signatureId = rows[0].id;
             res.redirect("/thanks");
         })
         .catch((err) => {
@@ -66,26 +67,34 @@ app.post("/", (req, res) => {
 });
 
 app.post("/petition", (req, res) => {
+    // console.log("post/petition");
     const { first, last, signature } = req.body;
 
     db.addFullNames(first, last, signature)
-        .then(() => {
-            res.cookie(first, "first name");
-            res.cookie(last, "last name");
-            res.cookie(signature);
+        .then(({ rows }) => {
+            req.session.signatureId = rows[0].id;
             res.redirect("/thanks");
         })
         .catch((err) => {
             console.log("error in getFullNames:", err);
-            res.render("home", { layout: "main", db, error: "need to sign" });
+            res.render("home", { addFullNamesError: true });
         });
 });
 
 app.get("/thanks", (req, res) => {
-    const { first, last, signature } = req.body;
-    db.getAllSigners()
-        .then(({ rows }) => {
-            res.render("thanks", { layout: "main", db, count: rows[0].count });
+    // console.log(req.session);
+
+    const signature = db.getSignatureById(req.session.signatureId);
+    const allSigners = db.getAllSigners();
+
+    Promise.all([signature, allSigners])
+        .then(([result1, result2]) => {
+            res.render("thanks", {
+                layout: "main",
+                db,
+                count: result2.rows[0].count,
+                signature: result1.rows[0].signature,
+            });
         })
         .catch((err) => {
             console.error("error in getting signatures", err);

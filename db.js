@@ -26,3 +26,8 @@ module.exports.getAllSigners = () => {
     const q = "SELECT COUNT(*) FROM signatures";
     return db.query(q);
 };
+
+module.exports.getSignatureById = (id) => {
+    const q = "SELECT signature FROM signatures WHERE id=$1";
+    return db.query(q, [id]);
+};
