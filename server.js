@@ -12,6 +12,10 @@ const cookieSession = require("cookie-session");
 
 const secrets = require("./secrets.json");
 
+const req = require("express/lib/request");
+
+const { hash, compare } = require("./bc");
+
 ////////////////prevent clickjacking/////////////////////////////
 app.use((req, res, next) => {
     res.setHeader("x-frame-options", "deny");
@@ -37,40 +41,58 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
     // console.log("get/", req.session);
-    if (req.session.signatureId) {
+    if (req.session.userId) {
         return res.redirect("/thanks");
     }
-    res.render("home", { layout: "main", db });
+    res.redirect("/petition");
 });
 
 app.get("/petition", (req, res) => {
     // console.log("get/petition", req.session);
-    if (req.session.signatureId) {
+    if (req.session.userId) {
         return res.redirect("/thanks");
     }
     res.render("home", { layout: "main", db });
 });
 
-app.post("/", (req, res) => {
-    // console.log("post/");
-    const { first, last, signature } = req.body;
+app.get("/register", (req, res) => {
+    res.render("register");
+});
 
-    db.addFullNames(first, last, signature)
-        .then(({ rows }) => {
-            req.session.signatureId = rows[0].id;
-            res.redirect("/thanks");
+app.post("/register", (req, res) => {
+    const { first, last, email, password } = req.body;
+    // this is where we will receive the user's data that
+    // want to register
+    // before we insert first, last, email and PW into the db
+    // we want to make the PW more secure by hashing it
+    hash(password)
+        .then((hashedPw) => {
+            console.log("hashedPWd :", hashedPw);
+            db.addUsersInfo(first, last, email, hashedPw).then(({ rows }) => {
+                req.session.userId = rows[0].id;
+                res.redirect("/petition");
+            });
+
+            // at this point in time you want to inser the user's data
+            // into your db; you want to insert first, last, email and hashedPW
+            // I WILL HARD CODE A STATUS RESPONSE
         })
-        .catch((err) => {
-            console.log("error in getFullNames:", err);
-            res.render("home", { addFullNamesError: true });
-        });
+        .catch((err) => console.log("err in hash", err));
+});
+
+app.get("/login", (req, res) => {
+    res.render("login");
+});
+
+app.post("/login", (req, res) => {
+    res.redirect("/petition");
 });
 
 app.post("/petition", (req, res) => {
     // console.log("post/petition");
-    const { first, last, signature } = req.body;
+    const { signature } = req.body;
 
-    db.addFullNames(first, last, signature)
+    db.addSignatures(signature, req.session.userId)
         .then(({ rows }) => {
             req.session.signatureId = rows[0].id;
             res.redirect("/thanks");
@@ -105,17 +127,19 @@ app.get("/thanks", (req, res) => {
 });
 
 app.get("/signers", (req, res) => {
-    // if (req.session.signatureId) {
-    db.getFullNames()
-        .then(({ rows }) => {
-            res.render("signers", {
-                allSigners: rows,
-            });
-        })
-        .catch((err) => console.log("error getting names or signatures:", err));
-    res.redirect("/");
-    // }
-    // res.redirect("/");
+    if (req.session.signatureId) {
+        db.getFullNames()
+            .then(({ rows }) => {
+                res.render("signers", {
+                    allSigners: rows,
+                });
+            })
+            .catch((err) =>
+                console.log("error getting names or signatures:", err)
+            );
+    } else {
+        res.redirect("/");
+    }
 });
 
 app.listen(8080, () => console.log("petition-project server listening"));

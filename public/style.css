@@ -29,12 +29,16 @@ h3 {
     color: red;
 }
 
-.input {
+.login {
+    color: black;
+}
+
+/* .input {
     display: inline-flex;
     width: 38em;
     flex-direction: row;
     justify-content: space-between;
-}
+} */
 
 .description {
     display: flex;
@@ -79,7 +83,29 @@ button {
     width: 5em;
     height: 4em;
     position: relative;
+    left: 36%;
+    background-color: black;
+    color: white;
+    font-size: larger;
+    border-radius: 20%;
+}
+
+.submit {
+    width: 5em;
+    height: 4em;
+    position: relative;
     left: 42%;
+    background-color: black;
+    color: white;
+    font-size: larger;
+    border-radius: 20%;
+}
+
+.log {
+    width: 5em;
+    height: 4em;
+    position: relative;
+    left: 33%;
     background-color: black;
     color: white;
     font-size: larger;

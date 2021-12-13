@@ -8,33 +8,6 @@
 
     </div>
     <form method="POST">
-        <div class="input">
-            <div class="description">
-                <input
-                    type="text"
-                    id="sign"
-                    name="first"
-                    placeholder=""
-                    value=""
-                    autocomplete="off"
-                    required
-                />
-                <h4>First Name</h4>
-            </div>
-            <div class="description">
-                <input
-                    type="text"
-                    id="sign"
-                    name="last"
-                    placeholder=""
-                    value=""
-                    autocomplete="off"
-                    required
-                />
-                <h4>Second Name</h4>
-            </div>
-        </div>
-        <br />
         <div>
             {{#if addFullNamesError}}<h3>Couldn't get your signature, please try
                     again</h3>{{/if}}
@@ -48,7 +21,7 @@
             />
         </div>
         <br />
-        <button>Submit</button>
+        <button class="submit">Submit</button>
     </form>
 
 </div>
