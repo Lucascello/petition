@@ -40,22 +40,26 @@ app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-    // console.log("get/", req.session);
-    if (req.session.userId) {
-        return res.redirect("/thanks");
-    }
     res.redirect("/petition");
 });
 
 app.get("/petition", (req, res) => {
     // console.log("get/petition", req.session);
     if (req.session.userId) {
-        return res.redirect("/thanks");
+        if (req.session.signatureId) {
+            return res.redirect("/thanks");
+        } else {
+            res.render("home", { layout: "main", db });
+        }
+    } else {
+        return res.redirect("/register");
     }
-    res.render("home", { layout: "main", db });
 });
 
 app.get("/register", (req, res) => {
+    if (req.session.userId) {
+        res.redirect("/petition");
+    }
     res.render("register");
 });
 
@@ -68,25 +72,46 @@ app.post("/register", (req, res) => {
     hash(password)
         .then((hashedPw) => {
             console.log("hashedPWd :", hashedPw);
-            db.addUsersInfo(first, last, email, hashedPw).then(({ rows }) => {
-                req.session.userId = rows[0].id;
-                res.redirect("/petition");
-            });
+            db.addUsersInfo(first, last, email, hashedPw)
+                .then(({ rows }) => {
+                    req.session.userId = rows[0].id;
+                    res.redirect("/petition");
+                })
+                .catch((err) => console.log("1st err in hash", err));
+            return res.render("register", { addUsersInfoError: true });
 
             // at this point in time you want to inser the user's data
             // into your db; you want to insert first, last, email and hashedPW
             // I WILL HARD CODE A STATUS RESPONSE
         })
-        .catch((err) => console.log("err in hash", err));
+        .catch((err) => console.log("2nd err in hash", err));
 });
 
 app.get("/login", (req, res) => {
+    if (req.session.userId) {
+        res.redirect("/petition");
+    }
     res.render("login");
 });
 
-app.post("/login", (req, res) => {
-    res.redirect("/petition");
-});
+// app.post("/login", (req, res) => {
+//     // this is where we will want to use compare
+//     // we'd first go to the database to retrieve the hash
+//     // for the email that the user provided
+//     // const hashFromDatabase =
+//     //     "I am not a hashed password and when you code this you will use actual value from your database";
+//     const {email, password}
+
+//     db.getPasswords(email).then(({rows})=> {
+//         console.log(rows)
+//     }).then
+//     compare(password, hashFromDatabase)
+//         .then((match) => {
+//             console.log("do provided PW and db stored hash match?", match);
+//             res.sendStatus(200);
+//         })
+//         .catch((err) => console.log("err in compare:", err));
+// });
 
 app.post("/petition", (req, res) => {
     // console.log("post/petition");
@@ -140,6 +165,10 @@ app.get("/signers", (req, res) => {
     } else {
         res.redirect("/");
     }
+});
+
+app.get("*", (req, res) => {
+    res.redirect("/");
 });
 
 app.listen(8080, () => console.log("petition-project server listening"));

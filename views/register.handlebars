@@ -3,8 +3,10 @@
     <img class="pissoir" src="/flush.jpg" alt="" />
     <br />
     <h2> <u>Please Register to start flushing properly!</u> </h2>
+    {{#if addUsersInfoError}}<h3>Please, either register if you are new here or
+            log in if you have already registered</h3>{{/if}}
     <form method="POST">
-        <h3 class="login">If you are already a member, please
+        <h3 class="login">If you have already registered, please
             <a href="/login"> login </a></h3>
         <div class="description">
             <input
