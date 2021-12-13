@@ -98,6 +98,7 @@ app.get("/thanks", (req, res) => {
         })
         .catch((err) => {
             console.error("error in getting signatures", err);
+            res.redirect("/");
         });
     // }
     // res.redirect("/");
@@ -112,6 +113,7 @@ app.get("/signers", (req, res) => {
             });
         })
         .catch((err) => console.log("error getting names or signatures:", err));
+    res.redirect("/");
     // }
     // res.redirect("/");
 });
