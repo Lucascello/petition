@@ -83,7 +83,7 @@ app.post("/petition", (req, res) => {
 
 app.get("/thanks", (req, res) => {
     // console.log(req.session);
-
+    // if (req.session.signatureId) {
     const signature = db.getSignatureById(req.session.signatureId);
     const allSigners = db.getAllSigners();
 
@@ -99,9 +99,12 @@ app.get("/thanks", (req, res) => {
         .catch((err) => {
             console.error("error in getting signatures", err);
         });
+    // }
+    // res.redirect("/");
 });
 
 app.get("/signers", (req, res) => {
+    // if (req.session.signatureId) {
     db.getFullNames()
         .then(({ rows }) => {
             res.render("signers", {
@@ -109,6 +112,8 @@ app.get("/signers", (req, res) => {
             });
         })
         .catch((err) => console.log("error getting names or signatures:", err));
+    // }
+    // res.redirect("/");
 });
 
 app.listen(8080, () => console.log("petition-project server listening"));
