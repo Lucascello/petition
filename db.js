@@ -50,7 +50,7 @@ module.exports.getAllSigners = () => {
 };
 
 module.exports.getSignatureById = (id) => {
-    const q = "SELECT signature FROM signatures WHERE id=$1";
+    const q = "SELECT signature, id FROM signatures WHERE id=$1";
     return db.query(q, [id]);
 };
 

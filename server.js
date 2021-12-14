@@ -71,20 +71,22 @@ app.post("/register", (req, res) => {
     // we want to make the PW more secure by hashing it
     hash(password)
         .then((hashedPw) => {
-            console.log("hashedPWd :", hashedPw);
+            // console.log("hashedPWd :", hashedPw);
             db.addUsersInfo(first, last, email, hashedPw)
                 .then(({ rows }) => {
                     req.session.userId = rows[0].id;
+
                     res.redirect("/petition");
                 })
-                .catch((err) => console.log("1st err in hash", err));
-            return res.render("register", { addUsersInfoError: true });
-
-            // at this point in time you want to inser the user's data
-            // into your db; you want to insert first, last, email and hashedPW
-            // I WILL HARD CODE A STATUS RESPONSE
+                .catch((err) => {
+                    // console.log("1st err in hash", err);
+                    return res.render("register", { addUsersInfoError: true });
+                });
         })
-        .catch((err) => console.log("2nd err in hash", err));
+        .catch((err) => {
+            // console.log("2nd err in hash", err);
+            return res.render("register", { addUsersInfoError: true });
+        });
 });
 
 app.get("/login", (req, res) => {
@@ -94,24 +96,50 @@ app.get("/login", (req, res) => {
     res.render("login");
 });
 
-// app.post("/login", (req, res) => {
-//     // this is where we will want to use compare
-//     // we'd first go to the database to retrieve the hash
-//     // for the email that the user provided
-//     // const hashFromDatabase =
-//     //     "I am not a hashed password and when you code this you will use actual value from your database";
-//     const {email, password}
+app.post("/login", (req, res) => {
+    // this is where we will want to use compare
+    // we'd first go to the database to retrieve the hash
+    // for the email that the user provided
+    // const hashFromDatabase =
+    //     "I am not a hashed password and when you code this you will use actual value from your database";
+    const { email, password } = req.body;
 
-//     db.getPasswords(email).then(({rows})=> {
-//         console.log(rows)
-//     }).then
-//     compare(password, hashFromDatabase)
-//         .then((match) => {
-//             console.log("do provided PW and db stored hash match?", match);
-//             res.sendStatus(200);
-//         })
-//         .catch((err) => console.log("err in compare:", err));
-// });
+    db.getPasswords(email)
+        .then(({ rows }) => {
+            // console.log(rows);
+            compare(password, rows[0].password)
+                .then((match) => {
+                    if (match) {
+                        req.session.userId = rows[0].id;
+                        db.getSignatureById(req.session.userId).then(
+                            (results) => {
+                                if (results.rows.length) {
+                                    // console.log("user has signed ");
+                                    req.session.signatureId =
+                                        results.rows[0].id;
+                                }
+                                // console.log(
+                                //     "requested session for the userID",
+                                //     req.session
+                                // );
+                                res.redirect("/petition");
+                            }
+                        );
+                    } else {
+                        // console.log("password incorrect");
+                        res.render("login", { getPasswordsError: true });
+                    }
+                })
+                .catch((err) => {
+                    // console.log("err in compare:", err);
+                    res.render("login", { getPasswordsError: true });
+                });
+        })
+        .catch((err) => {
+            // console.log("err on  getting email:", err);
+            res.render("login", { getPasswordsError: true });
+        });
+});
 
 app.post("/petition", (req, res) => {
     // console.log("post/petition");
@@ -144,7 +172,7 @@ app.get("/thanks", (req, res) => {
             });
         })
         .catch((err) => {
-            console.error("error in getting signatures", err);
+            // console.error("error in getting signatures", err);
             res.redirect("/");
         });
     // }
