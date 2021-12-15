@@ -1,11 +1,27 @@
 <div class="design">
     <h1>Thank You for advancing this great cause!!!</h1>
-    <h2> <u>All People That Have Already Signed</u> </h2>
+    <h2>
+        <u>Everybody{{#if city}} From {{city}}{{/if}}
+            That Have Already Signed</u>
+    </h2>
     <img class="closed" src="/closed.jpg" alt="" />
     <br />
-    <ul class="people_list">
-        {{#each allSigners}}
-            <li>{{this.first}} {{this.last}}</li>
+    <ol class="people_list">
+        {{#each Signatures}}
+            <li>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{#if url}}
+                    <a href="{{this.url}}">{{this.first}} {{this.last}}</a>
+                {{else}}
+                    {{this.first}}
+                    {{this.last}}
+                {{/if}}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                {{#if age}}{{this.age}} years young{{/if}}
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/signers/{{this.city}}">{{this.city}}</a>
+
+            </li>
         {{/each}}
-    </ul>
+    </ol>
 </div>

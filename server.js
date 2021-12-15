@@ -15,6 +15,7 @@ const secrets = require("./secrets.json");
 const req = require("express/lib/request");
 
 const { hash, compare } = require("./bc");
+const { redirect } = require("express/lib/response");
 
 ////////////////prevent clickjacking/////////////////////////////
 app.use((req, res, next) => {
@@ -37,6 +38,15 @@ app.use(
 
 app.use(express.static("./public"));
 
+if (process.env.NODE_ENV == "production") {
+    app.use((req, res, next) => {
+        if (req.headers["x-forwarded-proto"].startsWith("https")) {
+            return next();
+        }
+        res.redirect(`https://${req.hostname}${req.url}`);
+    });
+}
+
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
@@ -44,7 +54,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/petition", (req, res) => {
-    // console.log("get/petition", req.session);
+    console.log("get/petition", req.session);
     if (req.session.userId) {
         if (req.session.signatureId) {
             return res.redirect("/thanks");
@@ -54,6 +64,21 @@ app.get("/petition", (req, res) => {
     } else {
         return res.redirect("/register");
     }
+});
+
+app.post("/petition", (req, res) => {
+    // console.log("post/petition");
+    const { signature } = req.body;
+
+    db.addSignatures(signature, req.session.userId)
+        .then(({ rows }) => {
+            req.session.signatureId = rows[0].id;
+            res.redirect("/thanks");
+        })
+        .catch((err) => {
+            console.log("error in getFullNames:", err);
+            res.render("home", { addFullNamesError: true });
+        });
 });
 
 app.get("/register", (req, res) => {
@@ -76,7 +101,7 @@ app.post("/register", (req, res) => {
                 .then(({ rows }) => {
                     req.session.userId = rows[0].id;
 
-                    res.redirect("/petition");
+                    res.redirect("/profile");
                 })
                 .catch((err) => {
                     // console.log("1st err in hash", err);
@@ -87,6 +112,62 @@ app.post("/register", (req, res) => {
             // console.log("2nd err in hash", err);
             return res.render("register", { addUsersInfoError: true });
         });
+});
+
+// app.get("/profile", (req, res) => {
+//     res.render("profile");
+// });
+
+app.get("/profile", (req, res) => {
+    if (req.session.userId) {
+        res.render("profile");
+    } else {
+        return res.redirect("/register");
+    }
+});
+
+app.post("/profile", (req, res) => {
+    let { age, city, url } = req.body;
+
+    console.log("req.body post profile", req.body);
+
+    if (!age && !city && !url) {
+        console.log("user didn't give extra data");
+        return res.redirect("/petition");
+    }
+    if (
+        url &&
+        !url.startsWith("http:") &&
+        !url.startsWith("https:") &&
+        !url.startsWith("//")
+    ) {
+        console.log("got my url", url);
+        return res.render("profile", {
+            addUserProfilesError: true,
+        });
+    }
+    if (age === "" || isNaN(parseInt(age))) {
+        console.log("type of parseint", parseInt(age));
+        age = undefined;
+        return res.render("profile", {
+            numberERROR: true,
+        });
+    }
+    db.addUserProfiles(age, city, url, req.session.userId)
+        .then(({ rows }) => {
+            console.log("AM I getting here", req.session.profileId);
+            res.redirect("/petition");
+        })
+        .catch((err) => {
+            console.log("Whats wrong", err);
+            console.log("age", age);
+            console.log("type do age", typeof age);
+            // return res.render("profile", {
+            //     addUserProfilesError: true,
+            // });
+        });
+    // }
+    // }
 });
 
 app.get("/login", (req, res) => {
@@ -110,11 +191,12 @@ app.post("/login", (req, res) => {
             compare(password, rows[0].password)
                 .then((match) => {
                     if (match) {
+                        console.log("Whats the request", req.session);
                         req.session.userId = rows[0].id;
-                        db.getSignatureById(req.session.userId).then(
+                        db.getSignatureByUserId(req.session.userId).then(
                             (results) => {
                                 if (results.rows.length) {
-                                    // console.log("user has signed ");
+                                    console.log("user has signed ");
                                     req.session.signatureId =
                                         results.rows[0].id;
                                 }
@@ -141,28 +223,13 @@ app.post("/login", (req, res) => {
         });
 });
 
-app.post("/petition", (req, res) => {
-    // console.log("post/petition");
-    const { signature } = req.body;
-
-    db.addSignatures(signature, req.session.userId)
-        .then(({ rows }) => {
-            req.session.signatureId = rows[0].id;
-            res.redirect("/thanks");
-        })
-        .catch((err) => {
-            console.log("error in getFullNames:", err);
-            res.render("home", { addFullNamesError: true });
-        });
-});
-
 app.get("/thanks", (req, res) => {
     // console.log(req.session);
     // if (req.session.signatureId) {
     const signature = db.getSignatureById(req.session.signatureId);
-    const allSigners = db.getAllSigners();
+    const allSignatures = db.getSignatures();
 
-    Promise.all([signature, allSigners])
+    Promise.all([signature, allSignatures])
         .then(([result1, result2]) => {
             res.render("thanks", {
                 layout: "main",
@@ -181,10 +248,10 @@ app.get("/thanks", (req, res) => {
 
 app.get("/signers", (req, res) => {
     if (req.session.signatureId) {
-        db.getFullNames()
+        db.getAllSigners()
             .then(({ rows }) => {
                 res.render("signers", {
-                    allSigners: rows,
+                    Signatures: rows,
                 });
             })
             .catch((err) =>
@@ -195,8 +262,28 @@ app.get("/signers", (req, res) => {
     }
 });
 
+app.get("/signers/:city", (req, res) => {
+    db.getSignersByCity(req.params.city)
+        .then(({ rows }) => {
+            res.render("signers", {
+                Signatures: rows,
+                city: req.params.city,
+            });
+        })
+        .catch((err) =>
+            console.log(
+                "error getting names or signatures from each cities:",
+                err
+            )
+        );
+});
+
 app.get("*", (req, res) => {
     res.redirect("/");
 });
 
 app.listen(8080, () => console.log("petition-project server listening"));
+
+// app.listen(process.env.PORT || 8080, () =>
+//     console.log("petition-project server listening")
+// );

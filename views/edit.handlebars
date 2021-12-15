@@ -1,15 +1,9 @@
 <div class="design">
-    <h1>Please sign this petition to make the Not Flushing Habit a Public
-        Offense.</h1>
     <br /><br />
-    <img class="pissoir" src="/toilet-censored.jpg" alt="" />
+    <img class="pissoir" src="/closed.jpg" alt="" />
     <br />
-    <h2> <u>Please Register to start flushing properly!</u> </h2>
-    {{#if addUsersInfoError}}<h3>Something went wrong. Please register if you
-            are new here or log in if you have already registered</h3>{{/if}}
+    <h2> <u>Edit your profile</u> </h2>
     <form method="POST">
-        <h3 class="login">If you have already registered, please
-            <a href="/login"> login </a></h3>
         <div class="description">
             <input
                 type="text"
@@ -59,9 +53,44 @@
             />
             <h4>Password</h4>
         </div>
+        <div class="description">
+            <input
+                type="number"
+                id=""
+                name="age"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>Age</h4>
+        </div>
+        <div class="description">
+            <input
+                type="text"
+                id=""
+                name="city"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>City</h4>
+        </div>
+        <div class="description">
+            <input
+                type="url"
+                id=""
+                name="url"
+                pattern="(https://.*)|(http://.*)|(//.*)"
+                minlength="8"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>Homepage</h4>
+        </div>
         <br />
         <br />
-        <button>Register</button>
+        <button class="prof">CONTINUE</button>
     </form>
     <br />
 

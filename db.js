@@ -4,7 +4,8 @@ const username = "postgres";
 const password = "postgres";
 
 const db = spicedPg(
-    `postgres:${username}:${password}@localhost:5432/${database}`
+    process.env.DATABASE_URL ||
+        `postgres:${username}:${password}@localhost:5432/${database}`
 );
 console.log(`[db] connecting to:${database}`);
 
@@ -34,6 +35,14 @@ module.exports.addUsersInfo = (firstName, lastName, email, password) => {
     return db.query(q, params);
 };
 
+module.exports.addUserProfiles = (age, city, url, user_id) => {
+    const q = `INSERT INTO user_profiles (age, city, url, user_id)
+                VALUES ($1, $2, $3, $4)
+                RETURNING id`;
+    const params = [age, city, url, user_id];
+    return db.query(q, params);
+};
+
 // module.exports.getFullNames = () => {
 //     const q = "SELECT first, last FROM signatures";
 //     return db.query(q);
@@ -45,7 +54,27 @@ module.exports.getFullNames = () => {
 };
 
 module.exports.getAllSigners = () => {
+    const q = `SELECT signatures.user_id, users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url 
+        FROM signatures 
+        JOIN users 
+        ON signatures.user_id = users.id 
+        LEFT OUTER JOIN user_profiles 
+        ON signatures.user_id = user_profiles.user_id`;
+    return db.query(q);
+};
+
+module.exports.getSignatures = () => {
     const q = "SELECT COUNT(*) FROM signatures";
+    return db.query(q);
+};
+
+module.exports.getAllUsers = () => {
+    const q = "SELECT COUNT(*) FROM users";
+    return db.query(q);
+};
+
+module.exports.getAllExtraInfo = () => {
+    const q = "SELECT COUNT(*) FROM user_profiles";
     return db.query(q);
 };
 
@@ -54,7 +83,23 @@ module.exports.getSignatureById = (id) => {
     return db.query(q, [id]);
 };
 
+module.exports.getSignatureByUserId = (id) => {
+    const q = "SELECT id FROM signatures WHERE user_id=$1";
+    return db.query(q, [id]);
+};
+
 module.exports.getPasswords = (email) => {
     const q = "SELECT id, password FROM users WHERE email = $1";
     return db.query(q, [email]);
+};
+
+module.exports.getSignersByCity = (city) => {
+    const q = `SELECT signatures.user_id, users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url 
+        FROM signatures 
+        JOIN users 
+        ON signatures.user_id = users.id 
+        LEFT OUTER JOIN user_profiles 
+        ON signatures.user_id = user_profiles.user_id
+        WHERE LOWER(user_profiles.city) = LOWER($1)`;
+    return db.query(q, [city]);
 };

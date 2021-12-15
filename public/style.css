@@ -112,6 +112,17 @@ button {
     border-radius: 20%;
 }
 
+.prof {
+    width: 6em;
+    height: 4em;
+    position: relative;
+    left: 12%;
+    background-color: black;
+    color: white;
+    font-size: larger;
+    border-radius: 20%;
+}
+
 .signed {
     size: inherit;
     background-image: url("./click.jpg");

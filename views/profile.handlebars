@@ -1,0 +1,50 @@
+<div class="design">
+    <br /><br />
+    <img class="pissoir" src="/toilet-censored.jpg" alt="" />
+    <br />
+    <h2> <u>Please log in!</u> </h2>
+    {{#if addUserProfilesError}}<h3>Something went wrong. Please try again.</h3>{{/if}}
+    {{#if numberERROR}}<h3>Please stop trying to hack my project.</h3>{{/if}}
+    <form method="POST">
+        <div class="description">
+            <input
+                type="number"
+                id=""
+                name="age"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>Age</h4>
+        </div>
+        <div class="description">
+            <input
+                type="text"
+                id=""
+                name="city"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>City</h4>
+        </div>
+        <div class="description">
+            <input
+                type="url"
+                id=""
+                name="url"
+                pattern="(https://.*)|(http://.*)|(//.*)"
+                minlength="8"
+                placeholder=""
+                value=""
+                autocomplete="off"
+            />
+            <h4>Homepage</h4>
+        </div>
+        <br />
+        <br />
+        <button class="prof">CONTINUE</button>
+    </form>
+    <br />
+
+</div>
