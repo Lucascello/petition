@@ -17,6 +17,10 @@ const req = require("express/lib/request");
 const { hash, compare } = require("./bc");
 const { redirect } = require("express/lib/response");
 
+app.locals.helpers = {
+    
+}
+
 ////////////////prevent clickjacking/////////////////////////////
 app.use((req, res, next) => {
     res.setHeader("x-frame-options", "deny");
@@ -146,13 +150,16 @@ app.post("/profile", (req, res) => {
             addUserProfilesError: true,
         });
     }
-    if (age === "" || isNaN(parseInt(age))) {
+    if (age === "") {
         console.log("type of parseint", parseInt(age));
         age = undefined;
+    } else if (isNaN(parseInt(age))) {
+        console.log("type of parseint", parseInt(age));
         return res.render("profile", {
-            numberERROR: true,
+            addUserProfilesError: true,
         });
     }
+
     db.addUserProfiles(age, city, url, req.session.userId)
         .then(({ rows }) => {
             console.log("AM I getting here", req.session.profileId);
@@ -161,7 +168,7 @@ app.post("/profile", (req, res) => {
         .catch((err) => {
             console.log("Whats wrong", err);
             console.log("age", age);
-            console.log("type do age", typeof age);
+            console.log("type of age", typeof age);
             // return res.render("profile", {
             //     addUserProfilesError: true,
             // });
@@ -196,7 +203,7 @@ app.post("/login", (req, res) => {
                         db.getSignatureByUserId(req.session.userId).then(
                             (results) => {
                                 if (results.rows.length) {
-                                    console.log("user has signed ");
+                                    // console.log("user has signed ");
                                     req.session.signatureId =
                                         results.rows[0].id;
                                 }
@@ -213,12 +220,12 @@ app.post("/login", (req, res) => {
                     }
                 })
                 .catch((err) => {
-                    // console.log("err in compare:", err);
+                    console.log("err in compare:", err);
                     res.render("login", { getPasswordsError: true });
                 });
         })
         .catch((err) => {
-            // console.log("err on  getting email:", err);
+            console.log("err on  getting email:", err);
             res.render("login", { getPasswordsError: true });
         });
 });
@@ -250,6 +257,7 @@ app.get("/signers", (req, res) => {
     if (req.session.signatureId) {
         db.getAllSigners()
             .then(({ rows }) => {
+                console.log("Whats coming with the rows", rows);
                 res.render("signers", {
                     Signatures: rows,
                 });
@@ -263,19 +271,37 @@ app.get("/signers", (req, res) => {
 });
 
 app.get("/signers/:city", (req, res) => {
-    db.getSignersByCity(req.params.city)
-        .then(({ rows }) => {
-            res.render("signers", {
-                Signatures: rows,
-                city: req.params.city,
-            });
-        })
-        .catch((err) =>
-            console.log(
-                "error getting names or signatures from each cities:",
-                err
-            )
-        );
+    if (req.session.signatureId) {
+        db.getSignersByCity(req.params.city)
+            .then(({ rows }) => {
+                res.render("signers", {
+                    Signatures: rows,
+                    city: req.params.city,
+                });
+            })
+            .catch((err) =>
+                console.log(
+                    "error getting names or signatures from each cities:",
+                    err
+                )
+            );
+    } else {
+        res.redirect("/");
+    }
+});
+
+app.get("/profile/edit", (req, res) => {
+    // console.log("requested session for the edit", req.session);
+    if (req.session.userId && req.session.signatureId) {
+        db.getDataToEditProfile(req.session.userId)
+            .then((result) => {
+                const allData = result.rows[0];
+                res.render("edit", { allData });
+            })
+            .catch((err) => console.log("ERROR in geting allData", err));
+    } else {
+        res.redirect("/");
+    }
 });
 
 app.get("*", (req, res) => {

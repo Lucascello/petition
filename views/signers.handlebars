@@ -2,7 +2,7 @@
     <h1>Thank You for advancing this great cause!!!</h1>
     <h2>
         <u>Everybody{{#if city}} From {{city}}{{/if}}
-            That Have Already Signed</u>
+            That Has Already Signed</u>
     </h2>
     <img class="closed" src="/closed.jpg" alt="" />
     <br />
@@ -24,4 +24,9 @@
             </li>
         {{/each}}
     </ol>
+    {{#if city}}
+        <br />
+        <a href="/signers">Return To All The Signers</a>
+        <br /><br />{{/if}}
+
 </div>

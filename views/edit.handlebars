@@ -4,93 +4,91 @@
     <br />
     <h2> <u>Edit your profile</u> </h2>
     <form method="POST">
-        <div class="description">
-            <input
-                type="text"
-                id="sign"
-                name="first"
-                placeholder=""
-                value=""
-                autocomplete="off"
-                required
-            />
-            <h4>First Name</h4>
-        </div>
-        <div class="description">
-            <input
-                type="text"
-                id="sign"
-                name="last"
-                placeholder=""
-                value=""
-                autocomplete="off"
-                required
-            />
-            <h4>Last Name</h4>
-        </div>
-        <div class="description">
-            <input
-                type="email"
-                id="sign"
-                name="email"
-                placeholder=""
-                value=""
-                autocomplete="off"
-                required
-            />
-            <h4>Email Address</h4>
-        </div>
-        <div class="description">
-            <input
-                type="password"
-                id="sign"
-                name="password"
-                minlength="8"
-                placeholder=""
-                value=""
-                autocomplete="off"
-                required
-            />
-            <h4>Password</h4>
-        </div>
-        <div class="description">
-            <input
-                type="number"
-                id=""
-                name="age"
-                placeholder=""
-                value=""
-                autocomplete="off"
-            />
-            <h4>Age</h4>
-        </div>
-        <div class="description">
-            <input
-                type="text"
-                id=""
-                name="city"
-                placeholder=""
-                value=""
-                autocomplete="off"
-            />
-            <h4>City</h4>
-        </div>
-        <div class="description">
-            <input
-                type="url"
-                id=""
-                name="url"
-                pattern="(https://.*)|(http://.*)|(//.*)"
-                minlength="8"
-                placeholder=""
-                value=""
-                autocomplete="off"
-            />
-            <h4>Homepage</h4>
-        </div>
-        <br />
-        <br />
-        <button class="prof">CONTINUE</button>
+        {{#allData}}
+            <div class="description">
+                <input
+                    type="text"
+                    id="first"
+                    name="first"
+                    placeholder=""
+                    value="{{this.first}}"
+                    autocomplete="off"
+                />
+                <h4>First Name</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="text"
+                    id="last"
+                    name="last"
+                    placeholder=""
+                    value="{{this.last}}"
+                    autocomplete="off"
+                />
+                <h4>Last Name</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder=""
+                    value="{{this.email}}"
+                    autocomplete="off"
+                />
+                <h4>Email Address</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    minlength="8"
+                    placeholder=""
+                    value=""
+                    autocomplete="off"
+                />
+                <h4>Password</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="number"
+                    id=""
+                    name="age"
+                    placeholder=""
+                    value="{{this.age}}"
+                    autocomplete="off"
+                />
+                <h4>Age</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="text"
+                    id=""
+                    name="city"
+                    placeholder=""
+                    value="{{this.city}}"
+                    autocomplete="off"
+                />
+                <h4>City</h4>
+            </div>
+            <div class="description">
+                <input
+                    type="url"
+                    id=""
+                    name="url"
+                    pattern="(https://.*)|(http://.*)|(//.*)"
+                    minlength="8"
+                    placeholder=""
+                    value="{{this.url}}"
+                    autocomplete="off"
+                />
+                <h4>Homepage</h4>
+            </div>
+            <br />
+            <br />
+            <button class="update">Update</button>
+        {{/allData}}
     </form>
     <br />
 

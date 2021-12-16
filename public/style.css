@@ -50,9 +50,9 @@ h4 {
     margin: 0;
 }
 
-#sign {
+/* #sign {
     width: 20em;
-}
+} */
 
 .pissoir {
     width: 30em;
@@ -123,6 +123,17 @@ button {
     border-radius: 20%;
 }
 
+.update {
+    width: 6em;
+    height: 4em;
+    position: relative;
+    left: 12%;
+    background-color: black;
+    color: white;
+    font-size: larger;
+    border-radius: 20%;
+}
+
 .signed {
     size: inherit;
     background-image: url("./click.jpg");
@@ -133,3 +144,7 @@ button {
     width: 0;
     height: 0;
 } */
+
+.delete {
+    font-size: x-small;
+}
