@@ -10,6 +10,8 @@ const db = require("./db");
 
 const cookieSession = require("cookie-session");
 
+// const helmet = require("helmet");
+
 const secrets = require("./secrets.json");
 
 const req = require("express/lib/request");
@@ -17,9 +19,13 @@ const req = require("express/lib/request");
 const { hash, compare } = require("./bc");
 const { redirect } = require("express/lib/response");
 
-app.locals.helpers = {
-    
-}
+app.locals.helpers = {function capitalizeFirstLetter(str) {
+
+    // converting first letter to uppercase
+    const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+
+    return capitalized;
+}};
 
 ////////////////prevent clickjacking/////////////////////////////
 app.use((req, res, next) => {
@@ -301,6 +307,71 @@ app.get("/profile/edit", (req, res) => {
             .catch((err) => console.log("ERROR in geting allData", err));
     } else {
         res.redirect("/");
+    }
+});
+
+app.post("/profile/edit", (req, res) => {
+    // console.log(req.body);
+    // console.log(req.session.userId);
+    const { first, last, email, password, age, city, url } = req.body;
+    if (!req.body.password) {
+        const simpleUpdate = db.updateUsersInfoSimple(
+            first,
+            last,
+            email,
+            req.session.userId
+        );
+
+        const extraInfoUpdate = db.updateUsersExtraInfo(
+            age,
+            city,
+            url,
+            req.session.userId
+        );
+
+        const updatePassword = db.updatePassword(password, req.session.userId);
+
+        Promise.all([simpleUpdate, extraInfoUpdate])
+            .then(([result1, result2]) => {
+                res.redirect("/thanks", {
+                    layout: "main",
+                    db,
+                });
+            })
+            .catch((err) => {
+                console.error("error in updating all besides password", err);
+                res.redirect("/");
+            });
+    } else {
+        const simpleUpdate = db.updateUsersInfoSimple(
+            first,
+            last,
+            email,
+            req.session.userId
+        );
+
+        const extraInfoUpdate = db.updateUsersExtraInfo(
+            age,
+            city,
+            url,
+            req.session.userId
+        );
+
+        const updatePassword = db.updatePassword(password, req.session.userId);
+
+        hash(password).then((hashedPw) => {
+            Promise.all([simpleUpdate, extraInfoUpdate, updatePassword])
+                .then(([result1, result2, result3]) => {
+                    res.redirect("/thanks", {
+                        layout: "main",
+                        db,
+                    });
+                })
+                .catch((err) => {
+                    console.error("error in updating with password", err);
+                    res.redirect("/");
+                });
+        });
     }
 });
 

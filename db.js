@@ -9,15 +9,6 @@ const db = spicedPg(
 );
 console.log(`[db] connecting to:${database}`);
 
-// module.exports.addFullNames = (firstName, lastName, signature) => {
-//     const q = `INSERT INTO signatures (first, last, signature)
-//                 VALUES ($1, $2, $3)
-//                 RETURNING id`;
-//     const params = [firstName, lastName, signature];
-//     // console.log(firstName, lastName, signature);
-//     return db.query(q, params);
-// }; FROM PART 1 AND 2, BUT NOT VALID ANYMORE
-
 module.exports.addSignatures = (signature, user_id) => {
     const q = `INSERT INTO signatures (signature, user_id)
                 VALUES ($1, $2)
@@ -42,11 +33,6 @@ module.exports.addUserProfiles = (age, city, url, user_id) => {
     const params = [age, city, url, user_id];
     return db.query(q, params);
 };
-
-// module.exports.getFullNames = () => {
-//     const q = "SELECT first, last FROM signatures";
-//     return db.query(q);
-// }; FROM PART 1 AND 2, BUT NOT VALID ANYMORE
 
 module.exports.getFullNames = () => {
     const q = "SELECT first, last FROM users";
@@ -107,4 +93,22 @@ module.exports.getSignersByCity = (city) => {
 module.exports.getDataToEditProfile = (userId) => {
     const q = `SELECT * FROM users JOIN user_profiles ON users.id = user_profiles.user_id WHERE users.id = $1`;
     return db.query(q, [userId]);
+};
+
+module.exports.updateUsersInfoSimple = (firstName, lastName, email, userId) => {
+    const q = `UPDATE users SET first = $1, last = $2, email = $3  WHERE users.id = $4`;
+    const params = [firstName, lastName, email, userId];
+    return db.query(q, params);
+};
+
+module.exports.updatePassword = (password, userId) => {
+    const q = `UPDATE users SET password =$1 WHERE users.id = $2`;
+    const params = [password, userId];
+    return db.query(q, params);
+};
+
+module.exports.updateUsersExtraInfo = (age, city, url, user_Id) => {
+    const q = `UPDATE user_profiles SET age = $1, city = $2, url = $3 WHERE user_id = $4`;
+    const params = [age, city, url, user_Id];
+    return db.query(q, params);
 };
