@@ -19,9 +19,9 @@
 
                 {{#if age}}{{this.age}} years young{{/if}}
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="/signers/{{this.city}}">{{capitalizeLetter
-                        this.city
-                    }}</a>
+                {{#if city}}<a href="/signers/{{this.city}}">{{capitalizeLetter
+                            this.city
+                        }}</a>{{/if}}
 
             </li>
         {{/each}}

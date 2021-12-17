@@ -6,6 +6,7 @@
     <form method="POST">
         {{#allData}}
             <div class="description">
+                <h4>First Name</h4>
                 <input
                     type="text"
                     id="first"
@@ -14,9 +15,9 @@
                     value="{{this.first}}"
                     autocomplete="off"
                 />
-                <h4>First Name</h4>
             </div>
             <div class="description">
+                <h4>Last Name</h4>
                 <input
                     type="text"
                     id="last"
@@ -25,9 +26,9 @@
                     value="{{this.last}}"
                     autocomplete="off"
                 />
-                <h4>Last Name</h4>
             </div>
             <div class="description">
+                <h4>Email Address</h4>
                 <input
                     type="email"
                     id="email"
@@ -36,9 +37,9 @@
                     value="{{this.email}}"
                     autocomplete="off"
                 />
-                <h4>Email Address</h4>
             </div>
             <div class="description">
+                <h4>Password</h4>
                 <input
                     type="password"
                     id="password"
@@ -48,9 +49,9 @@
                     value=""
                     autocomplete="off"
                 />
-                <h4>Password</h4>
             </div>
             <div class="description">
+                <h4>Age</h4>
                 <input
                     type="number"
                     id=""
@@ -59,9 +60,9 @@
                     value="{{this.age}}"
                     autocomplete="off"
                 />
-                <h4>Age</h4>
             </div>
             <div class="description">
+                <h4>City</h4>
                 <input
                     type="text"
                     id=""
@@ -70,9 +71,9 @@
                     value="{{this.city}}"
                     autocomplete="off"
                 />
-                <h4>City</h4>
             </div>
             <div class="description">
+                <h4>Homepage</h4>
                 <input
                     type="url"
                     id=""
@@ -83,9 +84,7 @@
                     value="{{this.url}}"
                     autocomplete="off"
                 />
-                <h4>Homepage</h4>
             </div>
-            <br />
             <br />
             <button class="update">Update</button>
         {{/allData}}
