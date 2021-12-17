@@ -147,4 +147,13 @@ button {
 
 .delete {
     font-size: x-small;
+    width: auto;
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    font-family: arial, sans-serif;
+    color: rgb(82, 0, 153);
+    text-decoration: underline;
+    cursor: pointer;
+    left: 3%;
 }
