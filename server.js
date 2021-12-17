@@ -12,7 +12,7 @@ const cookieSession = require("cookie-session");
 
 // const helmet = require("helmet");
 
-let secrets = require("./secrets.json");
+// let secrets = require("./secrets.json");
 
 let sessionSecret = process.env.COOKIE_SECRET;
 
@@ -38,7 +38,7 @@ app.set("view engine", "handlebars");
 
 app.use(
     cookieSession({
-        secret: secrets.COOKIE_SECRET,
+        secret: sessionSecret,
         maxAge: 1000 * 60 * 60 * 24 * 14,
         sameSite: true,
     })
