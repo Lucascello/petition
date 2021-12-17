@@ -19,14 +19,6 @@ const req = require("express/lib/request");
 const { hash, compare } = require("./bc");
 const { redirect } = require("express/lib/response");
 
-app.locals.helpers = {function capitalizeFirstLetter(str) {
-
-    // converting first letter to uppercase
-    const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
-
-    return capitalized;
-}};
-
 ////////////////prevent clickjacking/////////////////////////////
 app.use((req, res, next) => {
     res.setHeader("x-frame-options", "deny");
@@ -266,6 +258,11 @@ app.get("/signers", (req, res) => {
                 console.log("Whats coming with the rows", rows);
                 res.render("signers", {
                     Signatures: rows,
+                    helpers: {
+                        capitalizeLetter: function (str) {
+                            return str[0].toUpperCase() + str.slice(1);
+                        },
+                    },
                 });
             })
             .catch((err) =>
@@ -283,6 +280,11 @@ app.get("/signers/:city", (req, res) => {
                 res.render("signers", {
                     Signatures: rows,
                     city: req.params.city,
+                    helpers: {
+                        capitalizeLetter: function (str) {
+                            return str[0].toUpperCase() + str.slice(1);
+                        },
+                    },
                 });
             })
             .catch((err) =>
@@ -379,8 +381,8 @@ app.get("*", (req, res) => {
     res.redirect("/");
 });
 
-app.listen(8080, () => console.log("petition-project server listening"));
+// app.listen(8080, () => console.log("petition-project server listening"));
 
-// app.listen(process.env.PORT || 8080, () =>
-//     console.log("petition-project server listening")
-// );
+app.listen(process.env.PORT || 8080, () =>
+    console.log("petition-project server listening")
+);

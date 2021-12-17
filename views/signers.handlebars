@@ -1,7 +1,7 @@
 <div class="design">
     <h1>Thank You for advancing this great cause!!!</h1>
     <h2>
-        <u>Everybody{{#if city}} From {{city}}{{/if}}
+        <u>Everybody{{#if city}} From {{capitalizeLetter city}}{{/if}}
             That Has Already Signed</u>
     </h2>
     <img class="closed" src="/closed.jpg" alt="" />
@@ -19,7 +19,9 @@
 
                 {{#if age}}{{this.age}} years young{{/if}}
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="/signers/{{this.city}}">{{this.city}}</a>
+                <a href="/signers/{{this.city}}">{{capitalizeLetter
+                        this.city
+                    }}</a>
 
             </li>
         {{/each}}
