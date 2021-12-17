@@ -12,7 +12,11 @@ const cookieSession = require("cookie-session");
 
 // const helmet = require("helmet");
 
-const secrets = require("./secrets.json");
+let sessionSescret = process.env.COOKIE_SECRET;
+
+if (!sessionSecret) {
+    sessionSecret = require("./secrets").COOKIE_SECRET;
+}
 
 const req = require("express/lib/request");
 
