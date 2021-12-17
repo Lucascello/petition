@@ -33,13 +33,6 @@ h3 {
     color: black;
 }
 
-/* .input {
-    display: inline-flex;
-    width: 38em;
-    flex-direction: row;
-    justify-content: space-between;
-} */
-
 .description {
     display: flex;
     flex-direction: column;
@@ -49,10 +42,6 @@ h3 {
 h4 {
     margin: 0;
 }
-
-/* #sign {
-    width: 20em;
-} */
 
 .pissoir {
     width: 30em;
@@ -138,12 +127,6 @@ button {
     size: inherit;
     background-image: url("./click.jpg");
 }
-
-/* #canvas {
-    visibility: hidden;
-    width: 0;
-    height: 0;
-} */
 
 .delete {
     font-size: x-small;
