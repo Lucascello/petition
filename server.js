@@ -10,10 +10,6 @@ const db = require("./db");
 
 const cookieSession = require("cookie-session");
 
-// const helmet = require("helmet");
-
-// let secrets = require("./secrets.json");
-
 let sessionSecret = process.env.COOKIE_SECRET;
 
 if (!sessionSecret) {
@@ -98,10 +94,6 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
     const { first, last, email, password } = req.body;
-    // this is where we will receive the user's data that
-    // want to register
-    // before we insert first, last, email and PW into the db
-    // we want to make the PW more secure by hashing it
     hash(password)
         .then((hashedPw) => {
             // console.log("hashedPWd :", hashedPw);
@@ -121,10 +113,6 @@ app.post("/register", (req, res) => {
             return res.render("register", { addUsersInfoError: true });
         });
 });
-
-// app.get("/profile", (req, res) => {
-//     res.render("profile");
-// });
 
 app.get("/profile", (req, res) => {
     if (req.session.userId) {
@@ -170,15 +158,13 @@ app.post("/profile", (req, res) => {
             res.redirect("/petition");
         })
         .catch((err) => {
-            console.log("Whats wrong", err);
-            console.log("age", age);
-            console.log("type of age", typeof age);
-            // return res.render("profile", {
-            //     addUserProfilesError: true,
-            // });
+            // console.log("Whats wrong", err);
+            // console.log("age", age);
+            // console.log("type of age", typeof age);
+            return res.render("profile", {
+                addUserProfilesError: true,
+            });
         });
-    // }
-    // }
 });
 
 app.get("/login", (req, res) => {
@@ -189,11 +175,6 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    // this is where we will want to use compare
-    // we'd first go to the database to retrieve the hash
-    // for the email that the user provided
-    // const hashFromDatabase =
-    //     "I am not a hashed password and when you code this you will use actual value from your database";
     const { email, password } = req.body;
 
     db.getPasswords(email)
@@ -202,7 +183,7 @@ app.post("/login", (req, res) => {
             compare(password, rows[0].password)
                 .then((match) => {
                     if (match) {
-                        console.log("Whats the request", req.session);
+                        // console.log("Whats the request", req.session);
                         req.session.userId = rows[0].id;
                         db.getSignatureByUserId(req.session.userId).then(
                             (results) => {
@@ -236,7 +217,6 @@ app.post("/login", (req, res) => {
 
 app.get("/thanks", (req, res) => {
     // console.log(req.session);
-    // if (req.session.signatureId) {
     const signature = db.getSignatureById(req.session.signatureId);
     const allSignatures = db.getSignatures();
 
@@ -253,8 +233,6 @@ app.get("/thanks", (req, res) => {
             // console.error("error in getting signatures", err);
             res.redirect("/");
         });
-    // }
-    // res.redirect("/");
 });
 
 app.get("/signers", (req, res) => {
@@ -309,6 +287,7 @@ app.get("/profile/edit", (req, res) => {
     if (req.session.userId && req.session.signatureId) {
         db.getDataToEditProfile(req.session.userId)
             .then((result) => {
+                // console.log("results for the edit", result);
                 const allData = result.rows[0];
                 res.render("edit", { allData });
             })
@@ -319,8 +298,8 @@ app.get("/profile/edit", (req, res) => {
 });
 
 app.post("/profile/edit", (req, res) => {
-    // console.log(req.body);
-    // console.log(req.session.userId);
+    // console.log("Req body in edit post", req.body);
+    // console.log("Req session in edit post", req.session.userId);
     const { first, last, email, password, age, city, url } = req.body;
     if (!req.body.password) {
         const simpleUpdate = db.updateUsersInfoSimple(
@@ -330,6 +309,26 @@ app.post("/profile/edit", (req, res) => {
             req.session.userId
         );
 
+        if (
+            url &&
+            !url.startsWith("http:") &&
+            !url.startsWith("https:") &&
+            !url.startsWith("//")
+        ) {
+            console.log("got my url", url);
+            return res.render("/profile/edit", {
+                addUserProfilesError: true,
+            });
+        }
+        if (age === "") {
+            console.log("type of parseint", parseInt(age));
+            age = undefined;
+        } else if (isNaN(parseInt(age))) {
+            console.log("type of parseint", parseInt(age));
+            return res.render("/profile/edit", {
+                addUserProfilesError: true,
+            });
+        }
         const extraInfoUpdate = db.updateUsersExtraInfo(
             age,
             city,
@@ -337,14 +336,9 @@ app.post("/profile/edit", (req, res) => {
             req.session.userId
         );
 
-        const updatePassword = db.updatePassword(password, req.session.userId);
-
         Promise.all([simpleUpdate, extraInfoUpdate])
             .then(([result1, result2]) => {
-                res.redirect("/thanks", {
-                    layout: "main",
-                    db,
-                });
+                res.redirect("/thanks");
             })
             .catch((err) => {
                 console.error("error in updating all besides password", err);
@@ -365,10 +359,12 @@ app.post("/profile/edit", (req, res) => {
             req.session.userId
         );
 
-        const updatePassword = db.updatePassword(password, req.session.userId);
-
         hash(password)
             .then((hashedPw) => {
+                const updatePassword = db.updatePassword(
+                    hashedPw,
+                    req.session.userId
+                );
                 Promise.all([simpleUpdate, extraInfoUpdate, updatePassword]);
             })
             .then(([result1, result2, result3]) => {
@@ -396,8 +392,8 @@ app.get("*", (req, res) => {
     res.redirect("/");
 });
 
-// app.listen(8080, () => console.log("petition-project server listening"));
-
 app.listen(process.env.PORT || 8080, () =>
     console.log("petition-project server listening")
 );
+
+// app.listen(8080, () => console.log("petition-project server listening"));

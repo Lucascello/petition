@@ -91,7 +91,7 @@ module.exports.getSignersByCity = (city) => {
 };
 
 module.exports.getDataToEditProfile = (userId) => {
-    const q = `SELECT * FROM users JOIN user_profiles ON users.id = user_profiles.user_id WHERE users.id = $1`;
+    const q = `SELECT * FROM users FULL JOIN user_profiles ON users.id = user_profiles.user_id WHERE users.id = $1`;
     return db.query(q, [userId]);
 };
 

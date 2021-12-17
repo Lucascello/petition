@@ -45,7 +45,7 @@ h4 {
 
 .pissoir {
     width: 30em;
-    height: 15em;
+    height: 24em;
 }
 
 .poops {
@@ -129,14 +129,13 @@ button {
 }
 
 .delete {
-    font-size: x-small;
+    font-size: medium;
     width: auto;
     background: none !important;
     border: none;
     padding: 0 !important;
-    font-family: arial, sans-serif;
     color: rgb(82, 0, 153);
     text-decoration: underline;
     cursor: pointer;
-    left: 3%;
+    left: 1%;
 }
