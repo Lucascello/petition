@@ -367,20 +367,29 @@ app.post("/profile/edit", (req, res) => {
 
         const updatePassword = db.updatePassword(password, req.session.userId);
 
-        hash(password).then((hashedPw) => {
-            Promise.all([simpleUpdate, extraInfoUpdate, updatePassword])
-                .then(([result1, result2, result3]) => {
-                    res.redirect("/thanks", {
-                        layout: "main",
-                        db,
-                    });
-                })
-                .catch((err) => {
-                    console.error("error in updating with password", err);
-                    res.redirect("/");
+        hash(password)
+            .then((hashedPw) => {
+                Promise.all([simpleUpdate, extraInfoUpdate, updatePassword]);
+            })
+            .then(([result1, result2, result3]) => {
+                res.redirect("/thanks", {
+                    layout: "main",
+                    db,
                 });
-        });
+            })
+            .catch((err) => {
+                console.error("error in updating with password", err);
+                res.redirect("/");
+            });
     }
+});
+
+app.post("/delete", (req, res) => {
+    console.log("requested session", req.session);
+    db.deleteSignature(req.session.userId).then(() => {
+        req.session.signatureId = null;
+        res.redirect("/petition");
+    });
 });
 
 app.get("*", (req, res) => {

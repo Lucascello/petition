@@ -112,3 +112,8 @@ module.exports.updateUsersExtraInfo = (age, city, url, user_Id) => {
     const params = [age, city, url, user_Id];
     return db.query(q, params);
 };
+
+module.exports.deleteSignature = (id) => {
+    const q = "DELETE FROM signatures WHERE user_id = $1";
+    return db.query(q, [id]);
+};
