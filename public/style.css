@@ -55,18 +55,18 @@ h4 {
 }
 
 .pissoir {
-    width: 30em;
-    height: 24em;
+    width: 35vw;
+    height: 45vh;
 }
 
 .poops {
-    width: 21em;
-    height: 24em;
+    width: 35vw;
+    height: 45vh;
 }
 
 .closed {
-    width: 21em;
-    height: 24em;
+    width: 35vw;
+    height: 45vh;
 }
 
 canvas {
