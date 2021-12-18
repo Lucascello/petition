@@ -16,7 +16,8 @@
         {{#each Signatures}}
             <li>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{#if url}}
-                    <a href="{{this.url}}">{{this.first}} {{this.last}}</a>
+                    <a class="click" href="{{this.url}}">{{this.first}}
+                        {{this.last}}</a>
                 {{else}}
                     {{this.first}}
                     {{this.last}}
@@ -25,21 +26,22 @@
 
                 {{#if age}}{{this.age}} years young{{/if}}
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                {{#if city}}<a href="/signers/{{this.city}}">{{capitalizeLetter
-                            this.city
-                        }}</a>{{/if}}
+                {{#if city}}<a
+                        class="click"
+                        href="/signers/{{this.city}}"
+                    >{{capitalizeLetter this.city}}</a>{{/if}}
 
             </li>
             <br />
         {{/each}}
     </ol>
-    {{#if Signatures}}<a href="/thanks">Return To My Signature</a>{{/if}}
     {{#if city}}
         <br />
-        <a href="/signers">Return To All The Signers</a>
-        <br /><br />
+        <a class="click" href="/signers">Return To All The Signers</a>
         <br />{{/if}}
 
+    <a class="click" href="/thanks">Return To My Signature</a>
+    <br /><br />
 </div>
 <footer>
     <p> © Lucas Ebert - Dec. 2021</p>

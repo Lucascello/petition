@@ -51,6 +51,10 @@ h5 {
     color: black;
 }
 
+.click:hover {
+    font-size: x-large;
+}
+
 .description {
     display: flex;
     flex-direction: column;
@@ -89,8 +93,8 @@ canvas {
 button {
     width: 5em;
     height: 4em;
-    position: relative;
-    left: 36%;
+    justify-self: center;
+    align-self: center;
     background-color: black;
     color: white;
     font-size: larger;
@@ -105,8 +109,6 @@ button:hover {
 .submit {
     width: 5em;
     height: 4em;
-    position: relative;
-    left: 42%;
     background-color: black;
     color: white;
     font-size: larger;
@@ -116,8 +118,6 @@ button:hover {
 .log {
     width: 5em;
     height: 4em;
-    position: relative;
-    left: 32%;
     background-color: black;
     color: white;
     font-size: larger;
@@ -127,8 +127,6 @@ button:hover {
 .prof {
     width: 6em;
     height: 4em;
-    position: relative;
-    left: 28%;
     background-color: black;
     color: white;
     font-size: larger;
@@ -138,8 +136,6 @@ button:hover {
 .update {
     width: 6em;
     height: 4em;
-    position: relative;
-    left: 30%;
     background-color: black;
     color: white;
     font-size: larger;
