@@ -4,6 +4,12 @@
         <u>Everybody{{#if city}} From {{capitalizeLetter city}}{{/if}}
             That Has Already Signed</u>
     </h2>
+    <h5>We, the undersigned{{#if city}}
+            people of
+            {{capitalizeLetter city}}{{/if}}, demand that the disgusting
+        practices of
+        <br />
+        not flushing after using the toilet may become a public offense.</h5>
     <img class="closed" src="/closed.jpg" alt="" />
     <br />
     <ol class="people_list">
@@ -24,11 +30,15 @@
                         }}</a>{{/if}}
 
             </li>
+            <br />
         {{/each}}
     </ol>
+    {{#if Signatures}}<a href="/thanks">Return To My Signature</a>{{/if}}
     {{#if city}}
         <br />
         <a href="/signers">Return To All The Signers</a>
-        <br /><br />{{/if}}
-
+        <br /><br />
+        <br />{{/if}}
+    <br />
+    <br />
 </div>
