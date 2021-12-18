@@ -97,6 +97,7 @@ button {
     align-self: center;
     background-color: black;
     color: white;
+    text-align: center;
     font-size: larger;
     border-radius: 20%;
 }
