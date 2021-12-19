@@ -388,6 +388,12 @@ app.post("/delete", (req, res) => {
     });
 });
 
+app.get("/logout", (req, res) => {
+    // console.log(req.session);
+    req.session = null;
+    res.redirect("/");
+});
+
 app.get("*", (req, res) => {
     res.redirect("/");
 });
