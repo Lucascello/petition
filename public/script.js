@@ -1,4 +1,4 @@
-// console.log("Testing");
+// console.log("Testing");//
 (function () {
     const can = document.getElementById("can");
 
